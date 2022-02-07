@@ -22,11 +22,16 @@ function createTextElement(text) {
   };
 }
 
-const myReact = {
-  createElement
+const ayush = {
+  createElement,
+  render
 };
 
-const element = myReact.createElement("h1", { id: "foo" }, "HELLO WORLD");
+const element = ayush.createElement(
+  "div",
+  null,
+  ayush.createElement("h1", { className: "hello" }, "Hello World")
+);
 
 /** @jsx myReact.createElement */
 // const element = <h1>Hello world</h1>;
@@ -40,20 +45,39 @@ const element = myReact.createElement("h1", { id: "foo" }, "HELLO WORLD");
 //   }
 // };
 
+function render(element, container) {
+  const dom =
+    element.type === "TEXT_ELEMENT"
+      ? document.createTextNode("")
+      : document.createElement(element.type);
+
+  const isProperty = (key) => key !== "children";
+  Object.keys(element.props)
+    .filter(isProperty)
+    .forEach((name) => {
+      dom[name] = element.props[name];
+    });
+
+  element.props.children.forEach((child) => render(child, dom));
+
+  container.appendChild(dom);
+}
+
 // the node where to append the element
 const container = document.getElementById("root");
+ayush.render(element, container);
 
 // creating the h1 node element
-const node = document.createElement(element.type);
+//const node = document.createElement(element.type);
 
 // assigning element props to the h1 node
-node["title"] = element.props.title;
+//node["title"] = element.props.title;
 
 // creates a text node
-const text = document.createTextNode("");
+//const text = document.createTextNode("");
 
-text["nodeValue"] = element.props.children;
+//text["nodeValue"] = element.props.children;
 
 // appending text to node & then appending node to container
-node.appendChild(text);
-container.appendChild(node);
+//node.appendChild(text);
+//container.appendChild(node);
