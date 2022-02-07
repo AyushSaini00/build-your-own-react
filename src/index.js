@@ -1,13 +1,44 @@
 import "./styles.css";
 
-// the sort of object that react.createElement return (essentially)
-const element = {
-  type: "h1",
-  props: {
-    title: "foo",
-    children: "Hello world"
-  }
+function createElement(type, props, ...children) {
+  return {
+    type,
+    props: {
+      ...props,
+      children: children.map((child) =>
+        typeof child === "object" ? child : createTextElement(child)
+      )
+    }
+  };
+}
+
+function createTextElement(text) {
+  return {
+    type: "TEXT_ELEMENT",
+    props: {
+      nodeValue: text,
+      children: []
+    }
+  };
+}
+
+const myReact = {
+  createElement
 };
+
+const element = myReact.createElement("h1", { id: "foo" }, "HELLO WORLD");
+
+/** @jsx myReact.createElement */
+// const element = <h1>Hello world</h1>;
+
+// the sort of object that react.createElement return (essentially)
+// const element = {
+//   type: "h1",
+//   props: {
+//     title: "foo",
+//     children: "Hello world"
+//   }
+// };
 
 // the node where to append the element
 const container = document.getElementById("root");
